@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM HNI - Online Google Sheets</title>
+    <!-- Tailwind CSS untuk Desain Modern -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800">
+
+    <!-- CONTAINER UTAMA -->
+    <div id="app" class="max-w-md mx-auto min-h-screen bg-white shadow-xl flex flex-col justify-between">
+        
+        <!-- HEADER -->
+        <header class="bg-emerald-700 text-white p-4 text-center font-bold text-lg shadow-md flex justify-between items-center">
+            <span id="header-title">CRM HNI Online</span>
+            <button id="btn-logout" onclick="logout()" class="text-xs bg-emerald-800 px-2 py-1 rounded hidden hover:bg-emerald-900">Keluar</button>
+        </header>
+
+        <!-- KONTEN DINAMIS BERDASARKAN LAYER -->
+        <main class="p-4 flex-grow overflow-y-auto relative">
+            
+            <!-- LOADING OVERLAY -->
+            <div id="loading" class="absolute inset-0 bg-white/80 z-50 flex items-center justify-center hidden">
+                <div class="text-emerald-700 font-bold text-sm animate-pulse">Menghubungkan ke Server...</div>
+            </div>
+
+            <!-- LAYER 1: LOGIN -->
+            <section id="layer-login" class="space-y-4 mt-10">
+                <div class="text-center">
+                    <h2 class="text-2xl font-extrabold text-emerald-800">Login CRM HNI</h2>
+                    <p class="text-sm text-slate-500 mt-1">Masukkan Nomor HP terdaftar Anda</p>
+                </div>
+                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-200 space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-emerald-900 mb-1">Nomor HP</label>
+                        <input type="tel" id="login-phone" placeholder="Contoh: 081232323145" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                    </div>
+                    <button onclick="prosesLogin()" class="w-full bg-emerald-700 text-white py-3 rounded-lg font-bold hover:bg-emerald-800 transition">Masuk Aplikasi</button>
+                </div>
+                <p class="text-xs text-center text-slate-400">Admin Utama: <code>081232323145</code></p>
+            </section>
+
+            <!-- LAYER 2: MENU UTAMA -->
+            <section id="layer-menu" class="space-y-3 hidden">
+                <div class="mb-4">
+                    <p class="text-xs text-slate-500">Selamat datang,</p>
+                    <h3 id="user-display-info" class="font-bold text-emerald-800 text-lg"></h3>
+                </div>
+                
+                <div class="grid grid-cols-1 gap-3">
+                    <button onclick="bukaLayer('hepi')" class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-left hover:bg-emerald-100 transition flex items-center justify-between">
+                        <div>
+                            <span class="font-bold text-emerald-900 block">Prospek Pelanggan HEPI</span>
+                            <span class="text-xs text-slate-500">Kirim WA per baris & custom script</span>
+                        </div>
+                        <span class="text-emerald-700 font-bold">&rarr;</span>
+                    </button>
+
+                    <button onclick="bukaLayer('agen')" class="p-4 bg-teal-50 border border-teal-200 rounded-xl text-left hover:bg-teal-100 transition flex items-center justify-between">
+                        <div>
+                            <span class="font-bold text-teal-900 block">Prospek Agen HNI</span>
+                            <span class="text-xs text-slate-500">Kirim WA per baris & custom script</span>
+                        </div>
+                        <span class="text-teal-700 font-bold">&rarr;</span>
+                    </button>
+
+                    <button onclick="bukaLayer('followup')" class="p-4 bg-blue-50 border border-blue-200 rounded-xl text-left hover:bg-blue-100 transition flex items-center justify-between">
+                        <div>
+                            <span class="font-bold text-blue-900 block">Follow Up Pelanggan</span>
+                            <span class="text-xs text-slate-500">Perawatan & penawaran ulang</span>
+                        </div>
+                        <span class="text-blue-700 font-bold">&rarr;</span>
+                    </button>
+
+                    <button onclick="bukaLayer('broadcast')" class="p-4 bg-purple-50 border border-purple-200 rounded-xl text-left hover:bg-purple-100 transition flex items-center justify-between">
+                        <div>
+                            <span class="font-bold text-purple-900 block">Broadcast Pesan</span>
+                            <span class="text-xs text-slate-500">Kirim WA per baris & info massal</span>
+                        </div>
+                        <span class="text-purple-700 font-bold">&rarr;</span>
+                    </button>
+
+                    <!-- MENU KHUSUS ADMIN -->
+                    <button id="menu-admin" onclick="bukaLayer('admin-akses')" class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-left hover:bg-amber-100 transition hidden items-center justify-between">
+                        <div>
+                            <span class="font-bold text-amber-900 block">Pendaftaran Akses (Admin)</span>
+                            <span class="text-xs text-slate-500">Tambah No HP Agen Baru</span>
+                        </div>
+                        <span class="text-amber-700 font-bold">&rarr;</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- LAYER 3: PROSPEK HEPI -->
+            <section id="layer-hepi" class="space-y-4 hidden">
+                <button onclick="kembaliKeMenu()" class="text-xs text-emerald-700 font-bold mb-2">&larr; Kembali ke Menu</button>
+                <h3 class="font-bold text-lg text-emerald-900">Prospek Pelanggan HEPI</h3>
+                
+                <div class="bg-slate-50 p-3 rounded-lg border space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Script WhatsApp (Bisa Diedit Manual)</label>
+                        <textarea id="hepi-script" class="w-full p-2 border rounded text-sm bg-white" rows="3">Assalamu’alaikum Kak [Nama], mau kenalin program spesial Pelanggan HEPI HNI: Tidak ada biaya join, langsung dapat potongan harga setiap belanja, tidak ada kewajiban belanja & target jualan. Yuk gabung!</textarea>
+                        <p class="text-[10px] text-slate-400 mt-0.5">Tag <code>[Nama]</code> otomatis berubah jadi nama prospek.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Daftar Prospek (Klik Tombol WA di Masing-Masing Baris)</label>
+                        <div id="container-input-hepi" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Hasil Prospek Default</label>
+                        <select id="hepi-status" class="w-full p-2 border rounded text-sm">
+                            <option value="Join">Join</option>
+                            <option value="Belum Join">Belum Join</option>
+                            <option value="Kirim Katalog">Kirim Katalog</option>
+                        </select>
+                    </div>
+                    <button onclick="simpanSemuaProspek('HEPI')" class="w-full bg-emerald-700 text-white py-2 rounded font-bold text-sm hover:bg-emerald-800">Simpan Data Terisi ke Histori</button>
+                </div>
+
+                <div class="mt-4">
+                    <h4 class="font-bold text-sm text-slate-700 mb-2">Histori Prospek HEPI</h4>
+                    <div id="list-hepi" class="space-y-2 text-xs"></div>
+                </div>
+            </section>
+
+            <!-- LAYER 4: PROSPEK AGEN HNI -->
+            <section id="layer-agen" class="space-y-4 hidden">
+                <button onclick="kembaliKeMenu()" class="text-xs text-teal-700 font-bold mb-2">&larr; Kembali ke Menu</button>
+                <h3 class="font-bold text-lg text-teal-900">Prospek Agen HNI</h3>
+                
+                <div class="bg-slate-50 p-3 rounded-lg border space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Script WhatsApp (Bisa Diedit Manual)</label>
+                        <textarea id="agen-script" class="w-full p-2 border rounded text-sm bg-white" rows="3">Assalamu’alaikum Kak [Nama], mau tawarkan peluang Agen Resmi HNI modal cuma Rp 10.000: Langsung dapat diskon belanja 10-30%, cashback bulanan, royalti, dan peluang membuka Halal Mart. Tertarik?</textarea>
+                        <p class="text-[10px] text-slate-400 mt-0.5">Tag <code>[Nama]</code> otomatis berubah jadi nama prospek.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Daftar Prospek (Klik Tombol WA di Masing-Masing Baris)</label>
+                        <div id="container-input-agen" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Hasil Prospek Default</label>
+                        <select id="agen-status" class="w-full p-2 border rounded text-sm">
+                            <option value="Join">Join</option>
+                            <option value="Belum Join">Belum Join</option>
+                            <option value="Kirim Katalog">Kirim Katalog</option>
+                        </select>
+                    </div>
+                    <button onclick="simpanSemuaProspek('AGEN')" class="w-full bg-teal-700 text-white py-2 rounded font-bold text-sm hover:bg-teal-800">Simpan Data Terisi ke Histori</button>
+                </div>
+
+                <div class="mt-4">
+                    <h4 class="font-bold text-sm text-slate-700 mb-2">Histori Prospek Agen</h4>
+                    <div id="list-agen" class="space-y-2 text-xs"></div>
+                </div>
+            </section>
+
+            <!-- LAYER 5: FOLLOW UP -->
+            <section id="layer-followup" class="space-y-4 hidden">
+                <button onclick="kembaliKeMenu()" class="text-xs text-blue-700 font-bold mb-2">&larr; Kembali ke Menu</button>
+                <h3 class="font-bold text-lg text-blue-900">Follow Up Pelanggan / Agen</h3>
+                
+                <div class="bg-slate-50 p-3 rounded-lg border space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Nama Tujuan</label>
+                        <input type="text" id="fu-nama" class="w-full p-2 border rounded text-sm" placeholder="Nama Lengkap">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Nomor HP</label>
+                        <input type="tel" id="fu-hp" class="w-full p-2 border rounded text-sm" placeholder="08xxxxxxxxxx">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Script WhatsApp (Bebas)</label>
+                        <textarea id="fu-script" class="w-full p-2 border rounded text-sm" rows="3" placeholder="Tulis pesan follow up..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Hasil Follow Up</label>
+                        <select id="fu-status" class="w-full p-2 border rounded text-sm">
+                            <option value="Belanja">Belanja</option>
+                            <option value="Belum Belanja">Belum Belanja</option>
+                        </select>
+                    </div>
+                    <button onclick="simpanFollowUp()" class="w-full bg-blue-700 text-white py-2 rounded font-bold text-sm hover:bg-blue-800">Kirim WA & Simpan</button>
+                </div>
+
+                <div class="mt-4">
+                    <h4 class="font-bold text-sm text-slate-700 mb-2">Histori Follow Up</h4>
+                    <div id="list-fu" class="space-y-2 text-xs"></div>
+                </div>
+            </section>
+
+            <!-- LAYER 6: BROADCAST -->
+            <section id="layer-broadcast" class="space-y-4 hidden">
+                <button onclick="kembaliKeMenu()" class="text-xs text-purple-700 font-bold mb-2">&larr; Kembali ke Menu</button>
+                <h3 class="font-bold text-lg text-purple-900">Broadcast Pesan</h3>
+                
+                <div class="bg-slate-50 p-3 rounded-lg border space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Isi Pesan Broadcast</label>
+                        <textarea id="bc-script" class="w-full p-2 border rounded text-sm bg-white" rows="3" placeholder="Tulis pesan informasi/promo..."></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Daftar Penerima (Klik Tombol WA di Masing-Masing Baris)</label>
+                        <div id="container-input-bc" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
+                    </div>
+                    <button onclick="simpanSemuaBroadcast()" class="w-full bg-purple-700 text-white py-2 rounded font-bold text-sm hover:bg-purple-800">Simpan Data Terisi ke Histori</button>
+                </div>
+
+                <div class="mt-4">
+                    <h4 class="font-bold text-sm text-slate-700 mb-2">Histori Broadcast</h4>
+                    <div id="list-bc" class="space-y-2 text-xs"></div>
+                </div>
+            </section>
+
+            <!-- MENU ADMIN: PENDAFTARAN AKSES -->
+            <section id="layer-admin-akses" class="space-y-4 hidden">
+                <button onclick="kembaliKeMenu()" class="text-xs text-amber-700 font-bold mb-2">&larr; Kembali ke Menu</button>
+                <h3 class="font-bold text-lg text-amber-900">Kelola Akses Agen Baru</h3>
+                
+                <div class="bg-slate-50 p-3 rounded-lg border space-y-3">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Nama Agen</label>
+                        <input type="text" id="admin-nama-agen" class="w-full p-2 border rounded text-sm" placeholder="Nama Lengkap Agen">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1">Nomor HP Agen</label>
+                        <input type="tel" id="admin-hp-agen" class="w-full p-2 border rounded text-sm" placeholder="08xxxxxxxxxx">
+                    </div>
+                    <button onclick="tambahAksesAgen()" class="w-full bg-amber-600 text-white py-2 rounded font-bold text-sm hover:bg-amber-700">Berikan Akses Aplikasi</button>
+                </div>
+
+                <div class="mt-4">
+                    <h4 class="font-bold text-sm text-slate-700 mb-2">Daftar Agen yang Diizinkan</h4>
+                    <div id="list-agen-terdaftar" class="space-y-2 text-xs"></div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-slate-50 p-3 text-center text-xs text-slate-400 border-t">
+            CRM HNI System &copy; 2026
+        </footer>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycbyNxs5fdhS8GghAgIhCSmTpBNFEaxsvhj4HpydQqG2fGMWzXJOzYSz460mZV1xzXh1tpw/exec";
+        let currentUser = JSON.parse(localStorage.getItem('crm_current_user')) || null;
+
+        window.onload = function() {
+            if (currentUser) {
+                tampilkanMenuUtama();
+            }
+            generateInputRows('hepi');
+            generateInputRows('agen');
+            generateInputRows('bc');
+        };
+
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('hidden', !show);
+        }
+
+        function generateInputRows(prefix) {
+            let container = document.getElementById(`container-input-${prefix}`);
+            container.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                let div = document.createElement('div');
+                div.className = 'flex gap-1 items-center bg-white p-2 rounded border';
+                div.innerHTML = `
+                    <span class="text-[10px] font-bold text-slate-400 w-3">${i}.</span>
+                    <input type="text" id="${prefix}-nama-${i}" placeholder="Nama" class="w-4/12 p-1 border rounded text-xs">
+                    <input type="tel" id="${prefix}-hp-${i}" placeholder="No HP" class="w-4/12 p-1 border rounded text-xs">
+                    <button onclick="kirimWAPerBaris('${prefix}', ${i})" class="w-4/12 bg-emerald-600 text-white text-[10px] py-1.5 px-1 rounded font-bold hover:bg-emerald-700 text-center">Kirim WA</button>
+                `;
+                container.appendChild(div);
+            }
+        }
+
+        async function prosesLogin() {
+            let hpInput = document.getElementById('login-phone').value.trim();
+            if(!hpInput) {
+                alert('Masukkan nomor HP terlebih dahulu!');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                let response = await fetch(`${API_URL}?action=getUsers`);
+                let users = await response.json();
+                let found = users.find(u => String(u.hp).trim() === hpInput);
+
+                if (found) {
+                    currentUser = found;
+                    localStorage.setItem('crm_current_user', JSON.stringify(currentUser));
+                    tampilkanMenuUtama();
+                } else {
+                    alert('Nomor HP belum didaftarkan oleh Admin!');
+                }
+            } catch (error) {
+                alert('Gagal terhubung ke server Google Sheets.');
+                console.error(error);
+            }
+            showLoading(false);
+        }
+
+        function logout() {
+            localStorage.removeItem('crm_current_user');
+            currentUser = null;
+            sembunyikanSemuaLayer();
+            document.getElementById('layer-login').classList.remove('hidden');
+            document.getElementById('btn-logout').classList.add('hidden');
+            document.getElementById('login-phone').value = '';
+        }
+
+        function tampilkanMenuUtama() {
+            sembunyikanSemuaLayer();
+            document.getElementById('layer-menu').classList.remove('hidden');
+            document.getElementById('btn-logout').classList.remove('hidden');
+            document.getElementById('user-display-info').innerText = `${currentUser.nama} (${currentUser.hp})`;
+
+            if (currentUser.role === 'admin') {
+                document.getElementById('menu-admin').classList.remove('hidden');
+                document.getElementById('menu-admin').classList.add('flex');
+            } else {
+                document.getElementById('menu-admin').classList.add('hidden');
+            }
+        }
+
+        function sembunyikanSemuaLayer() {
+            ['layer-login', 'layer-menu', 'layer-hepi', 'layer-agen', 'layer-followup', 'layer-broadcast', 'layer-admin-akses'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        }
+
+        function bukaLayer(namaLayer) {
+            sembunyikanSemuaLayer();
+            document.getElementById(`layer-${namaLayer}`).classList.remove('hidden');
+            if(namaLayer === 'hepi') renderHistori('HEPI');
+            if(namaLayer === 'agen') renderHistori('AGEN');
+            if(namaLayer === 'followup') renderHistori('FU');
+            if(namaLayer === 'broadcast') renderHistori('BC');
+            if(namaLayer === 'admin-akses') renderDaftarAgen();
+        }
+
+        function kembaliKeMenu() {
+            tampilkanMenuUtama();
+        }
+
+        function kirimWAPerBaris(prefix, index) {
+            let nama = document.getElementById(`${prefix}-nama-${index}`).value.trim();
+            let hp = document.getElementById(`${prefix}-hp-${index}`).value.trim();
+
+            if (!nama || !hp) {
+                alert(`Harap isi Nama dan No HP pada baris nomor ${index} terlebih dahulu!`);
+                return;
+            }
+
+            let script = document.getElementById(`${prefix}-script`).value.trim();
+            if (!script) {
+                alert('Script WhatsApp tidak boleh kosong!');
+                return;
+            }
+
+            let pesanFinal = script.replace(/\[Nama\]/gi, nama);
+            window.open(`https://api.whatsapp.com/send?phone=${hp}&text=${encodeURIComponent(pesanFinal)}`, '_blank');
+        }
+
+        async function simpanSemuaProspek(tipe) {
+            let prefix = tipe === 'HEPI' ? 'hepi' : 'agen';
+            let status = document.getElementById(`${prefix}-status`).value;
+            let rawScript = document.getElementById(`${prefix}-script`).value.trim();
+            let sheetName = tipe === 'HEPI' ? 'Prospects' : 'Prospects'; // Bisa dibedakan jika tabel dipisah
+            
+            let countBerhasil = 0;
+            let waktu = new Date().toLocaleString();
+            showLoading(true);
+
+            try {
+                for (let i = 1; i <= 10; i++) {
+                    let nama = document.getElementById(`${prefix}-nama-${i}`).value.trim();
+                    let hp = document.getElementById(`${prefix}-hp-${i}`).value.trim();
+
+                    if (nama && hp) {
+                        countBerhasil++;
+                        let rowData = [waktu, nama, hp, status, rawScript, tipe, currentUser.hp];
+                        await fetch(API_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({ action: 'addData', sheet: sheetName, row: rowData })
+                        });
+                    }
+                }
+
+                if (countBerhasil === 0) {
+                    alert('Tidak ada data terisi untuk disimpan!');
+                    showLoading(false);
+                    return;
+                }
+
+                alert(`Berhasil menyimpan ${countBerhasil} data ke Google Sheets!`);
+                generateInputRows(prefix);
+                renderHistori(tipe);
+            } catch (error) {
+                alert('Gagal menyimpan data ke server.');
+                console.error(error);
+            }
+            showLoading(false);
+        }
+
+        async function simpanSemuaBroadcast() {
+            let script = document.getElementById('bc-script').value.trim();
+            if (!script) {
+                alert('Isi pesan broadcast tidak boleh kosong!');
+                return;
+            }
+
+            let countBerhasil = 0;
+            let waktu = new Date().toLocaleString();
+            showLoading(true);
+
+            try {
+                for (let i = 1; i <= 10; i++) {
+                    let nama = document.getElementById(`bc-nama-${i}`).value.trim();
+                    let hp = document.getElementById(`bc-hp-${i}`).value.trim();
+
+                    if (nama && hp) {
+                        countBerhasil++;
+                        let rowData = [waktu, nama, hp, script, currentUser.hp];
+                        await fetch(API_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({ action: 'addData', sheet: 'Broadcast', row: rowData })
+                        });
+                    }
+                }
+
+                if (countBerhasil === 0) {
+                    alert('Tidak ada data penerima yang terisi!');
+                    showLoading(false);
+                    return;
+                }
+
+                alert(`Berhasil menyimpan ${countBerhasil} data broadcast!`);
+                generateInputRows('bc');
+                document.getElementById('bc-script').value = '';
+                renderHistori('BC');
+            } catch (error) {
+                alert('Gagal menyimpan broadcast.');
+                console.error(error);
+            }
+            showLoading(false);
+        }
+
+        async function simpanFollowUp() {
+            let nama = document.getElementById('fu-nama').value.trim();
+            let hp = document.getElementById('fu-hp').value.trim();
+            let script = document.getElementById('fu-script').value.trim();
+            let status = document.getElementById('fu-status').value;
+
+            if(!nama || !hp || !script) {
+                alert('Semua field harus diisi!');
+                return;
+            }
+
+            let waktu = new Date().toLocaleString();
+            let rowData = [waktu, nama, hp, script, status, currentUser.hp];
+            
+            showLoading(true);
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'addData', sheet: 'FollowUp', row: rowData })
+                });
+
+                window.open(`https://api.whatsapp.com/send?phone=${hp}&text=${encodeURIComponent(script)}`, '_blank');
+                
+                document.getElementById('fu-nama').value = '';
+                document.getElementById('fu-hp').value = '';
+                document.getElementById('fu-script').value = '';
+                renderHistori('FU');
+            } catch (error) {
+                alert('Gagal menyimpan follow up.');
+            }
+            showLoading(false);
+        }
+
+        async function renderHistori(tipe) {
+            let sheetName = (tipe === 'HEPI' || tipe === 'AGEN') ? 'Prospects' : (tipe === 'FU' ? 'FollowUp' : 'Broadcast');
+            let containerId = tipe === 'HEPI' ? 'list-hepi' : (tipe === 'AGEN' ? 'list-agen' : (tipe === 'FU' ? 'list-fu' : 'list-bc'));
+            let container = document.getElementById(containerId);
+            container.innerHTML = '<p class="text-slate-400 italic">Memuat data...</p>';
+
+            try {
+                let response = await fetch(`${API_URL}?action=getHistori&sheet=${sheetName}`);
+                let list = await response.json();
+
+                // Filter khusus tipe prospek (HEPI / AGEN)
+                if (tipe === 'HEPI' || tipe === 'AGEN') {
+                    list = list.filter(item => item.tipe === tipe);
+                }
+
+                // Filter isolasi data (jika bukan admin, hanya tampilkan miliknya sendiri)
+                if (currentUser.role !== 'admin') {
+                    list = list.filter(item => String(item.oleh).trim() === String(currentUser.hp).trim());
+                }
+
+                container.innerHTML = '';
+                if (list.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 italic">Belum ada histori data.</p>';
+                    return;
+                }
+
+                // Tampilkan dari data terbaru
+                list.reverse().forEach(item => {
+                    let div = document.createElement('div');
+                    div.className = 'p-2 bg-slate-50 border rounded flex justify-between items-center';
+                    
+                    let targetNama = item.nama || item.target_name || item.recipient_name;
+                    let targetHp = item.hp || item.target_phone || item.recipient_phone;
+
+                    let infoText = `<b>${targetNama}</b> (${targetHp})<br><span class="text-slate-400">${item.waktu}</span>`;
+                    if(item.status) infoText += `<br>Status: <span class="font-semibold text-emerald-700">${item.status}</span>`;
+                    if(currentUser.role === 'admin') infoText += `<br><span class="text-[10px] text-amber-600">Input oleh: ${item.oleh}</span>`;
+
+                    div.innerHTML = `<div>${infoText}</div>`;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                container.innerHTML = '<p class="text-red-400 italic">Gagal memuat histori.</p>';
+            }
+        }
+
+        async function tambahAksesAgen() {
+            let nama = document.getElementById('admin-nama-agen').value.trim();
+            let hp = document.getElementById('admin-hp-agen').value.trim();
+
+            if(!nama || !hp) {
+                alert('Nama dan No HP Agen harus diisi!');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'addUser', sheet: 'Users', hp: hp, nama: nama, role: 'agent' })
+                });
+
+                alert('Akses agen berhasil ditambahkan ke Google Sheets!');
+                document.getElementById('admin-nama-agen').value = '';
+                document.getElementById('admin-hp-agen').value = '';
+                renderDaftarAgen();
+            } catch (error) {
+                alert('Gagal menambahkan akses.');
+            }
+            showLoading(false);
+        }
+
+        async function renderDaftarAgen() {
+            let container = document.getElementById('list-agen-terdaftar');
+            container.innerHTML = '<p class="text-slate-400 italic">Memuat...</p>';
+
+            try {
+                let response = await fetch(`${API_URL}?action=getUsers`);
+                let users = await response.json();
+                container.innerHTML = '';
+
+                let displayAgents = users.filter(a => String(a.hp).trim() !== '081232323145');
+                if(displayAgents.length === 0) {
+                    container.innerHTML = '<p class="text-slate-400 italic">Belum ada agen terdaftar.</p>';
+                    return;
+                }
+
+                displayAgents.forEach(agent => {
+                    let div = document.createElement('div');
+                    div.className = 'p-2 bg-slate-50 border rounded flex justify-between items-center';
+                    div.innerHTML = `<div><b>${agent.nama}</b><br>${agent.hp}</div><span class="text-[10px] bg-slate-200 px-2 py-1 rounded uppercase">${agent.role}</span>`;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                container.innerHTML = '<p class="text-red-400 italic">Gagal memuat daftar agen.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

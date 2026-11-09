@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM HNI - Online Google Sheets</title>
+    <title>CRM HNI - Online</title>
     <!-- Tailwind CSS untuk Desain Modern -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
@@ -251,7 +251,10 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbyqlnXGGC7QphvcMJbiY7_qVdkDFUPIshNCnQ5Ku49_En5ACexXTewG65Jl3guFV_fACA/exec";
+        // Menggunakan CORS Proxy agar bisa tembus dari GitHub Pages ke Google Apps Script
+        const RAW_API_URL = "https://script.google.com/macros/s/AKfycbyqlnXGGC7QphvcMJbiY7_qVdkDFUPIshNCnQ5Ku49_En5ACexXTewG65Jl3guFV_fACA/exec";
+        const API_URL = "https://corsproxy.io/?" + encodeURIComponent(RAW_API_URL);
+
         let currentUser = JSON.parse(localStorage.getItem('crm_current_user')) || null;
 
         window.onload = function() {
@@ -292,7 +295,7 @@
 
             showLoading(true);
             try {
-                let response = await fetch(`${API_URL}?action=getUsers`);
+                let response = await fetch(`${API_URL}&action=getUsers`);
                 let users = await response.json();
                 let found = users.find(u => String(u.hp).trim() === hpInput);
 
@@ -376,7 +379,7 @@
             let prefix = tipe === 'HEPI' ? 'hepi' : 'agen';
             let status = document.getElementById(`${prefix}-status`).value;
             let rawScript = document.getElementById(`${prefix}-script`).value.trim();
-            let sheetName = tipe === 'HEPI' ? 'Prospects' : 'Prospects'; // Bisa dibedakan jika tabel dipisah
+            let sheetName = 'Prospects';
             
             let countBerhasil = 0;
             let waktu = new Date().toLocaleString();
@@ -496,15 +499,13 @@
             container.innerHTML = '<p class="text-slate-400 italic">Memuat data...</p>';
 
             try {
-                let response = await fetch(`${API_URL}?action=getHistori&sheet=${sheetName}`);
+                let response = await fetch(`${API_URL}&action=getHistori&sheet=${sheetName}`);
                 let list = await response.json();
 
-                // Filter khusus tipe prospek (HEPI / AGEN)
                 if (tipe === 'HEPI' || tipe === 'AGEN') {
                     list = list.filter(item => item.tipe === tipe);
                 }
 
-                // Filter isolasi data (jika bukan admin, hanya tampilkan miliknya sendiri)
                 if (currentUser.role !== 'admin') {
                     list = list.filter(item => String(item.oleh).trim() === String(currentUser.hp).trim());
                 }
@@ -515,7 +516,6 @@
                     return;
                 }
 
-                // Tampilkan dari data terbaru
                 list.reverse().forEach(item => {
                     let div = document.createElement('div');
                     div.className = 'p-2 bg-slate-50 border rounded flex justify-between items-center';
@@ -566,7 +566,7 @@
             container.innerHTML = '<p class="text-slate-400 italic">Memuat...</p>';
 
             try {
-                let response = await fetch(`${API_URL}?action=getUsers`);
+                let response = await fetch(`${API_URL}&action=getUsers`);
                 let users = await response.json();
                 container.innerHTML = '';
 

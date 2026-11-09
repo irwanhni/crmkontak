@@ -477,43 +477,97 @@
             });
         }
 
-        function renderHistori(tipe) {
-            let sheetName = (tipe === 'HEPI' || tipe === 'AGEN') ? 'Prospects' : (tipe === 'FU' ? 'FollowUp' : 'Broadcast');
-            let containerId = tipe === 'HEPI' ? 'list-hepi' : (tipe === 'AGEN' ? 'list-agen' : (tipe === 'FU' ? 'list-fu' : 'list-bc'));
-            let container = document.getElementById(containerId);
-            container.innerHTML = '<p class="text-slate-400 italic">Memuat data...</p>';
+        
+function renderHistori(tipe) {
 
-            fetchJSONP('getHistori', { sheet: sheetName }, function(list) {
-                if (tipe === 'HEPI' || tipe === 'AGEN') {
-                    list = list.filter(item => item.tipe === tipe);
-                }
+    const sheetName =
+        (tipe === 'HEPI' || tipe === 'AGEN') ? 'Prospects' :
+        (tipe === 'FU' ? 'FollowUp' : 'Broadcast');
 
-                if (currentUser.role !== 'admin') {
-                    list = list.filter(item => String(item.oleh).trim() === String(currentUser.hp).trim());
-                }
+    const containerId =
+        tipe === 'HEPI' ? 'list-hepi' :
+        tipe === 'AGEN' ? 'list-agen' :
+        tipe === 'FU' ? 'list-fu' : 'list-bc';
 
-                container.innerHTML = '';
-                if (list.length === 0) {
-                    container.innerHTML = '<p class="text-slate-400 italic">Belum ada histori data.</p>';
-                    return;
-                }
+    const container = document.getElementById(containerId);
 
-                list.reverse().forEach(item => {
-                    let div = document.createElement('div');
-                    div.className = 'p-2 bg-slate-50 border rounded flex justify-between items-center';
-                    
-                    let targetNama = item.nama || item.target_name || item.recipient_name;
-                    let targetHp = item.hp || item.target_phone || item.recipient_phone;
+    container.innerHTML = '<p>Memuat histori...</p>';
 
-                    let infoText = `<b>${targetNama}</b> (${targetHp})<br><span class="text-slate-400">${item.waktu}</span>`;
-                    if(item.status) infoText += `<br>Status: <span class="font-semibold text-emerald-700">${item.status}</span>`;
-                    if(currentUser.role === 'admin') infoText += `<br><span class="text-[10px] text-amber-600">Input oleh: ${item.oleh}</span>`;
+    fetchJSONP('getHistori', {sheet: sheetName}, function(list) {
 
-                    div.innerHTML = `<div>${infoText}</div>`;
-                    container.appendChild(div);
-                });
-            });
+        if (!list) {
+            container.innerHTML = '<p>Gagal memuat histori.</p>';
+            return;
         }
+
+        // Mendukung header kapital maupun huruf kecil
+        function ambil(item, nama) {
+            const key = Object.keys(item).find(
+                k => k.toLowerCase() === nama.toLowerCase()
+            );
+            return key ? item[key] : '';
+        }
+
+        if (tipe === 'HEPI' || tipe === 'AGEN') {
+            list = list.filter(item =>
+                String(ambil(item, 'Tipe')).toUpperCase() === tipe
+            );
+        }
+
+        if (currentUser.role !== 'admin') {
+            list = list.filter(item =>
+                String(ambil(item, 'Oleh')).trim() ===
+                String(currentUser.hp).trim()
+            );
+        }
+
+        container.innerHTML = '';
+
+        if (list.length === 0) {
+            container.innerHTML =
+                '<p class="text-slate-400">Belum ada histori data.</p>';
+            return;
+        }
+
+        list.reverse().forEach(item => {
+
+            const nama = ambil(item, 'Nama') || '-';
+            const hp = ambil(item, 'Hp') || '-';
+            const waktu = ambil(item, 'Waktu') || '-';
+            const status = ambil(item, 'Status');
+            const oleh = ambil(item, 'Oleh');
+
+            const div = document.createElement('div');
+            div.className = 'p-3 bg-slate-50 border rounded-lg mb-2';
+
+            const judul = document.createElement('b');
+            judul.textContent = nama + ' (' + hp + ')';
+
+            const tanggal = document.createElement('p');
+            tanggal.className = 'text-slate-400';
+            tanggal.textContent = waktu;
+
+            div.append(judul, tanggal);
+
+            if (status) {
+                const statusText = document.createElement('p');
+                statusText.textContent = 'Status: ' + status;
+                statusText.className = 'font-semibold text-emerald-700';
+                div.appendChild(statusText);
+            }
+
+            if (currentUser.role === 'admin') {
+                const adminText = document.createElement('p');
+                adminText.className = 'text-amber-600 text-xs';
+                adminText.textContent = 'Input oleh: ' + oleh;
+                div.appendChild(adminText);
+            }
+
+            container.appendChild(div);
+        });
+    });
+}
+
 
         function tambahAksesAgen() {
             let nama = document.getElementById('admin-nama-agen').value.trim();

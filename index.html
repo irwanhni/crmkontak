@@ -3,25 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM HNI - Online</title>
-    <!-- Tailwind CSS untuk Desain Modern -->
+    <title>CRM HNI - Online JSONP</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800">
 
-    <!-- CONTAINER UTAMA -->
     <div id="app" class="max-w-md mx-auto min-h-screen bg-white shadow-xl flex flex-col justify-between">
         
         <!-- HEADER -->
         <header class="bg-emerald-700 text-white p-4 text-center font-bold text-lg shadow-md flex justify-between items-center">
-            <span id="header-title">CRM HNI Online</span>
+            <span>CRM HNI Online</span>
             <button id="btn-logout" onclick="logout()" class="text-xs bg-emerald-800 px-2 py-1 rounded hidden hover:bg-emerald-900">Keluar</button>
         </header>
 
-        <!-- KONTEN DINAMIS BERDASARKAN LAYER -->
+        <!-- KONTEN -->
         <main class="p-4 flex-grow overflow-y-auto relative">
             
-            <!-- LOADING OVERLAY -->
             <div id="loading" class="absolute inset-0 bg-white/80 z-50 flex items-center justify-center hidden">
                 <div class="text-emerald-700 font-bold text-sm animate-pulse">Menghubungkan ke Server...</div>
             </div>
@@ -82,7 +80,6 @@
                         <span class="text-purple-700 font-bold">&rarr;</span>
                     </button>
 
-                    <!-- MENU KHUSUS ADMIN -->
                     <button id="menu-admin" onclick="bukaLayer('admin-akses')" class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-left hover:bg-amber-100 transition hidden items-center justify-between">
                         <div>
                             <span class="font-bold text-amber-900 block">Pendaftaran Akses (Admin)</span>
@@ -97,19 +94,15 @@
             <section id="layer-hepi" class="space-y-4 hidden">
                 <button onclick="kembaliKeMenu()" class="text-xs text-emerald-700 font-bold mb-2">&larr; Kembali ke Menu</button>
                 <h3 class="font-bold text-lg text-emerald-900">Prospek Pelanggan HEPI</h3>
-                
                 <div class="bg-slate-50 p-3 rounded-lg border space-y-3">
                     <div>
-                        <label class="block text-xs font-semibold mb-1">Script WhatsApp (Bisa Diedit Manual)</label>
+                        <label class="block text-xs font-semibold mb-1">Script WhatsApp</label>
                         <textarea id="hepi-script" class="w-full p-2 border rounded text-sm bg-white" rows="3">Assalamu’alaikum Kak [Nama], mau kenalin program spesial Pelanggan HEPI HNI: Tidak ada biaya join, langsung dapat potongan harga setiap belanja, tidak ada kewajiban belanja & target jualan. Yuk gabung!</textarea>
-                        <p class="text-[10px] text-slate-400 mt-0.5">Tag <code>[Nama]</code> otomatis berubah jadi nama prospek.</p>
                     </div>
-
                     <div>
-                        <label class="block text-xs font-semibold mb-1">Daftar Prospek (Klik Tombol WA di Masing-Masing Baris)</label>
+                        <label class="block text-xs font-semibold mb-1">Daftar Prospek</label>
                         <div id="container-input-hepi" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
                     </div>
-
                     <div>
                         <label class="block text-xs font-semibold mb-1">Hasil Prospek Default</label>
                         <select id="hepi-status" class="w-full p-2 border rounded text-sm">
@@ -120,7 +113,6 @@
                     </div>
                     <button onclick="simpanSemuaProspek('HEPI')" class="w-full bg-emerald-700 text-white py-2 rounded font-bold text-sm hover:bg-emerald-800">Simpan Data Terisi ke Histori</button>
                 </div>
-
                 <div class="mt-4">
                     <h4 class="font-bold text-sm text-slate-700 mb-2">Histori Prospek HEPI</h4>
                     <div id="list-hepi" class="space-y-2 text-xs"></div>
@@ -131,19 +123,15 @@
             <section id="layer-agen" class="space-y-4 hidden">
                 <button onclick="kembaliKeMenu()" class="text-xs text-teal-700 font-bold mb-2">&larr; Kembali ke Menu</button>
                 <h3 class="font-bold text-lg text-teal-900">Prospek Agen HNI</h3>
-                
                 <div class="bg-slate-50 p-3 rounded-lg border space-y-3">
                     <div>
-                        <label class="block text-xs font-semibold mb-1">Script WhatsApp (Bisa Diedit Manual)</label>
+                        <label class="block text-xs font-semibold mb-1">Script WhatsApp</label>
                         <textarea id="agen-script" class="w-full p-2 border rounded text-sm bg-white" rows="3">Assalamu’alaikum Kak [Nama], mau tawarkan peluang Agen Resmi HNI modal cuma Rp 10.000: Langsung dapat diskon belanja 10-30%, cashback bulanan, royalti, dan peluang membuka Halal Mart. Tertarik?</textarea>
-                        <p class="text-[10px] text-slate-400 mt-0.5">Tag <code>[Nama]</code> otomatis berubah jadi nama prospek.</p>
                     </div>
-
                     <div>
-                        <label class="block text-xs font-semibold mb-1">Daftar Prospek (Klik Tombol WA di Masing-Masing Baris)</label>
+                        <label class="block text-xs font-semibold mb-1">Daftar Prospek</label>
                         <div id="container-input-agen" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
                     </div>
-
                     <div>
                         <label class="block text-xs font-semibold mb-1">Hasil Prospek Default</label>
                         <select id="agen-status" class="w-full p-2 border rounded text-sm">
@@ -154,7 +142,6 @@
                     </div>
                     <button onclick="simpanSemuaProspek('AGEN')" class="w-full bg-teal-700 text-white py-2 rounded font-bold text-sm hover:bg-teal-800">Simpan Data Terisi ke Histori</button>
                 </div>
-
                 <div class="mt-4">
                     <h4 class="font-bold text-sm text-slate-700 mb-2">Histori Prospek Agen</h4>
                     <div id="list-agen" class="space-y-2 text-xs"></div>
@@ -165,7 +152,6 @@
             <section id="layer-followup" class="space-y-4 hidden">
                 <button onclick="kembaliKeMenu()" class="text-xs text-blue-700 font-bold mb-2">&larr; Kembali ke Menu</button>
                 <h3 class="font-bold text-lg text-blue-900">Follow Up Pelanggan / Agen</h3>
-                
                 <div class="bg-slate-50 p-3 rounded-lg border space-y-3">
                     <div>
                         <label class="block text-xs font-semibold mb-1">Nama Tujuan</label>
@@ -176,7 +162,7 @@
                         <input type="tel" id="fu-hp" class="w-full p-2 border rounded text-sm" placeholder="08xxxxxxxxxx">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold mb-1">Script WhatsApp (Bebas)</label>
+                        <label class="block text-xs font-semibold mb-1">Script WhatsApp</label>
                         <textarea id="fu-script" class="w-full p-2 border rounded text-sm" rows="3" placeholder="Tulis pesan follow up..."></textarea>
                     </div>
                     <div>
@@ -188,7 +174,6 @@
                     </div>
                     <button onclick="simpanFollowUp()" class="w-full bg-blue-700 text-white py-2 rounded font-bold text-sm hover:bg-blue-800">Kirim WA & Simpan</button>
                 </div>
-
                 <div class="mt-4">
                     <h4 class="font-bold text-sm text-slate-700 mb-2">Histori Follow Up</h4>
                     <div id="list-fu" class="space-y-2 text-xs"></div>
@@ -199,19 +184,17 @@
             <section id="layer-broadcast" class="space-y-4 hidden">
                 <button onclick="kembaliKeMenu()" class="text-xs text-purple-700 font-bold mb-2">&larr; Kembali ke Menu</button>
                 <h3 class="font-bold text-lg text-purple-900">Broadcast Pesan</h3>
-                
                 <div class="bg-slate-50 p-3 rounded-lg border space-y-3">
                     <div>
                         <label class="block text-xs font-semibold mb-1">Isi Pesan Broadcast</label>
                         <textarea id="bc-script" class="w-full p-2 border rounded text-sm bg-white" rows="3" placeholder="Tulis pesan informasi/promo..."></textarea>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold mb-1">Daftar Penerima (Klik Tombol WA di Masing-Masing Baris)</label>
+                        <label class="block text-xs font-semibold mb-1">Daftar Penerima</label>
                         <div id="container-input-bc" class="space-y-2 max-h-60 overflow-y-auto pr-1"></div>
                     </div>
                     <button onclick="simpanSemuaBroadcast()" class="w-full bg-purple-700 text-white py-2 rounded font-bold text-sm hover:bg-purple-800">Simpan Data Terisi ke Histori</button>
                 </div>
-
                 <div class="mt-4">
                     <h4 class="font-bold text-sm text-slate-700 mb-2">Histori Broadcast</h4>
                     <div id="list-bc" class="space-y-2 text-xs"></div>
@@ -222,7 +205,6 @@
             <section id="layer-admin-akses" class="space-y-4 hidden">
                 <button onclick="kembaliKeMenu()" class="text-xs text-amber-700 font-bold mb-2">&larr; Kembali ke Menu</button>
                 <h3 class="font-bold text-lg text-amber-900">Kelola Akses Agen Baru</h3>
-                
                 <div class="bg-slate-50 p-3 rounded-lg border space-y-3">
                     <div>
                         <label class="block text-xs font-semibold mb-1">Nama Agen</label>
@@ -234,7 +216,6 @@
                     </div>
                     <button onclick="tambahAksesAgen()" class="w-full bg-amber-600 text-white py-2 rounded font-bold text-sm hover:bg-amber-700">Berikan Akses Aplikasi</button>
                 </div>
-
                 <div class="mt-4">
                     <h4 class="font-bold text-sm text-slate-700 mb-2">Daftar Agen yang Diizinkan</h4>
                     <div id="list-agen-terdaftar" class="space-y-2 text-xs"></div>
@@ -243,18 +224,14 @@
 
         </main>
 
-        <!-- FOOTER -->
         <footer class="bg-slate-50 p-3 text-center text-xs text-slate-400 border-t">
             CRM HNI System &copy; 2026
         </footer>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- SCRIPT LOGIC (JSONP METHOD) -->
     <script>
-        // Menggunakan CORS Proxy agar bisa tembus dari GitHub Pages ke Google Apps Script
-        const RAW_API_URL = "https://script.google.com/macros/s/AKfycbyqlnXGGC7QphvcMJbiY7_qVdkDFUPIshNCnQ5Ku49_En5ACexXTewG65Jl3guFV_fACA/exec";
-        const API_URL = "https://corsproxy.io/?" + encodeURIComponent(RAW_API_URL);
-
+        const API_URL = "https://script.google.com/macros/s/AKfycbyqlnXGGC7QphvcMJbiY7_qVdkDFUPIshNCnQ5Ku49_En5ACexXTewG65Jl3guFV_fACA/exec";
         let currentUser = JSON.parse(localStorage.getItem('crm_current_user')) || null;
 
         window.onload = function() {
@@ -268,6 +245,31 @@
 
         function showLoading(show) {
             document.getElementById('loading').classList.toggle('hidden', !show);
+        }
+
+        // Fungsi JSONP untuk GET data agar bebas CORS
+        function fetchJSONP(action, params = {}, callback) {
+            let callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
+            window[callbackName] = function(data) {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                callback(data);
+            };
+
+            let url = `${API_URL}?action=${action}&callback=${callbackName}`;
+            for (let key in params) {
+                url += `&${key}=${encodeURIComponent(params[key])}`;
+            }
+
+            let script = document.createElement('script');
+            script.src = url;
+            script.onerror = function() {
+                delete window[callbackName];
+                document.body.removeChild(script);
+                alert("Gagal terhubung ke server Google Sheets.");
+                showLoading(false);
+            };
+            document.body.appendChild(script);
         }
 
         function generateInputRows(prefix) {
@@ -286,7 +288,7 @@
             }
         }
 
-        async function prosesLogin() {
+        function prosesLogin() {
             let hpInput = document.getElementById('login-phone').value.trim();
             if(!hpInput) {
                 alert('Masukkan nomor HP terlebih dahulu!');
@@ -294,11 +296,9 @@
             }
 
             showLoading(true);
-            try {
-                let response = await fetch(`${API_URL}&action=getUsers`);
-                let users = await response.json();
+            fetchJSONP('getUsers', {}, function(users) {
+                showLoading(false);
                 let found = users.find(u => String(u.hp).trim() === hpInput);
-
                 if (found) {
                     currentUser = found;
                     localStorage.setItem('crm_current_user', JSON.stringify(currentUser));
@@ -306,11 +306,7 @@
                 } else {
                     alert('Nomor HP belum didaftarkan oleh Admin!');
                 }
-            } catch (error) {
-                alert('Gagal terhubung ke server Google Sheets.');
-                console.error(error);
-            }
-            showLoading(false);
+            });
         }
 
         function logout() {
@@ -375,6 +371,25 @@
             window.open(`https://api.whatsapp.com/send?phone=${hp}&text=${encodeURIComponent(pesanFinal)}`, '_blank');
         }
 
+        // Untuk POST data (Kirim ke Apps Script menggunakan teknik no-cors / form submit tersembunyi)
+        async function postDataGoogle(payload, callback) {
+            showLoading(true);
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                showLoading(false);
+                callback(true);
+            } catch (err) {
+                showLoading(false);
+                alert('Gagal mengirim data ke server.');
+                callback(false);
+            }
+        }
+
         async function simpanSemuaProspek(tipe) {
             let prefix = tipe === 'HEPI' ? 'hepi' : 'agen';
             let status = document.getElementById(`${prefix}-status`).value;
@@ -383,37 +398,26 @@
             
             let countBerhasil = 0;
             let waktu = new Date().toLocaleString();
-            showLoading(true);
 
-            try {
-                for (let i = 1; i <= 10; i++) {
-                    let nama = document.getElementById(`${prefix}-nama-${i}`).value.trim();
-                    let hp = document.getElementById(`${prefix}-hp-${i}`).value.trim();
+            for (let i = 1; i <= 10; i++) {
+                let nama = document.getElementById(`${prefix}-nama-${i}`).value.trim();
+                let hp = document.getElementById(`${prefix}-hp-${i}`).value.trim();
 
-                    if (nama && hp) {
-                        countBerhasil++;
-                        let rowData = [waktu, nama, hp, status, rawScript, tipe, currentUser.hp];
-                        await fetch(API_URL, {
-                            method: 'POST',
-                            body: JSON.stringify({ action: 'addData', sheet: sheetName, row: rowData })
-                        });
-                    }
+                if (nama && hp) {
+                    countBerhasil++;
+                    let rowData = [waktu, nama, hp, status, rawScript, tipe, currentUser.hp];
+                    await postDataGoogle({ action: 'addData', sheet: sheetName, row: rowData }, function(){});
                 }
-
-                if (countBerhasil === 0) {
-                    alert('Tidak ada data terisi untuk disimpan!');
-                    showLoading(false);
-                    return;
-                }
-
-                alert(`Berhasil menyimpan ${countBerhasil} data ke Google Sheets!`);
-                generateInputRows(prefix);
-                renderHistori(tipe);
-            } catch (error) {
-                alert('Gagal menyimpan data ke server.');
-                console.error(error);
             }
-            showLoading(false);
+
+            if (countBerhasil === 0) {
+                alert('Tidak ada data terisi untuk disimpan!');
+                return;
+            }
+
+            alert(`Berhasil menyimpan ${countBerhasil} data ke Google Sheets!`);
+            generateInputRows(prefix);
+            renderHistori(tipe);
         }
 
         async function simpanSemuaBroadcast() {
@@ -425,38 +429,27 @@
 
             let countBerhasil = 0;
             let waktu = new Date().toLocaleString();
-            showLoading(true);
 
-            try {
-                for (let i = 1; i <= 10; i++) {
-                    let nama = document.getElementById(`bc-nama-${i}`).value.trim();
-                    let hp = document.getElementById(`bc-hp-${i}`).value.trim();
+            for (let i = 1; i <= 10; i++) {
+                let nama = document.getElementById(`bc-nama-${i}`).value.trim();
+                let hp = document.getElementById(`bc-hp-${i}`).value.trim();
 
-                    if (nama && hp) {
-                        countBerhasil++;
-                        let rowData = [waktu, nama, hp, script, currentUser.hp];
-                        await fetch(API_URL, {
-                            method: 'POST',
-                            body: JSON.stringify({ action: 'addData', sheet: 'Broadcast', row: rowData })
-                        });
-                    }
+                if (nama && hp) {
+                    countBerhasil++;
+                    let rowData = [waktu, nama, hp, script, currentUser.hp];
+                    await postDataGoogle({ action: 'addData', sheet: 'Broadcast', row: rowData }, function(){});
                 }
-
-                if (countBerhasil === 0) {
-                    alert('Tidak ada data penerima yang terisi!');
-                    showLoading(false);
-                    return;
-                }
-
-                alert(`Berhasil menyimpan ${countBerhasil} data broadcast!`);
-                generateInputRows('bc');
-                document.getElementById('bc-script').value = '';
-                renderHistori('BC');
-            } catch (error) {
-                alert('Gagal menyimpan broadcast.');
-                console.error(error);
             }
-            showLoading(false);
+
+            if (countBerhasil === 0) {
+                alert('Tidak ada data penerima yang terisi!');
+                return;
+            }
+
+            alert(`Berhasil menyimpan ${countBerhasil} data broadcast!`);
+            generateInputRows('bc');
+            document.getElementById('bc-script').value = '';
+            renderHistori('BC');
         }
 
         async function simpanFollowUp() {
@@ -473,35 +466,24 @@
             let waktu = new Date().toLocaleString();
             let rowData = [waktu, nama, hp, script, status, currentUser.hp];
             
-            showLoading(true);
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'addData', sheet: 'FollowUp', row: rowData })
-                });
-
-                window.open(`https://api.whatsapp.com/send?phone=${hp}&text=${encodeURIComponent(script)}`, '_blank');
-                
-                document.getElementById('fu-nama').value = '';
-                document.getElementById('fu-hp').value = '';
-                document.getElementById('fu-script').value = '';
-                renderHistori('FU');
-            } catch (error) {
-                alert('Gagal menyimpan follow up.');
-            }
-            showLoading(false);
+            postDataGoogle({ action: 'addData', sheet: 'FollowUp', row: rowData }, function(success) {
+                if(success) {
+                    window.open(`https://api.whatsapp.com/send?phone=${hp}&text=${encodeURIComponent(script)}`, '_blank');
+                    document.getElementById('fu-nama').value = '';
+                    document.getElementById('fu-hp').value = '';
+                    document.getElementById('fu-script').value = '';
+                    renderHistori('FU');
+                }
+            });
         }
 
-        async function renderHistori(tipe) {
+        function renderHistori(tipe) {
             let sheetName = (tipe === 'HEPI' || tipe === 'AGEN') ? 'Prospects' : (tipe === 'FU' ? 'FollowUp' : 'Broadcast');
             let containerId = tipe === 'HEPI' ? 'list-hepi' : (tipe === 'AGEN' ? 'list-agen' : (tipe === 'FU' ? 'list-fu' : 'list-bc'));
             let container = document.getElementById(containerId);
             container.innerHTML = '<p class="text-slate-400 italic">Memuat data...</p>';
 
-            try {
-                let response = await fetch(`${API_URL}&action=getHistori&sheet=${sheetName}`);
-                let list = await response.json();
-
+            fetchJSONP('getHistori', { sheet: sheetName }, function(list) {
                 if (tipe === 'HEPI' || tipe === 'AGEN') {
                     list = list.filter(item => item.tipe === tipe);
                 }
@@ -530,12 +512,10 @@
                     div.innerHTML = `<div>${infoText}</div>`;
                     container.appendChild(div);
                 });
-            } catch (error) {
-                container.innerHTML = '<p class="text-red-400 italic">Gagal memuat histori.</p>';
-            }
+            });
         }
 
-        async function tambahAksesAgen() {
+        function tambahAksesAgen() {
             let nama = document.getElementById('admin-nama-agen').value.trim();
             let hp = document.getElementById('admin-hp-agen').value.trim();
 
@@ -544,32 +524,22 @@
                 return;
             }
 
-            showLoading(true);
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'addUser', sheet: 'Users', hp: hp, nama: nama, role: 'agent' })
-                });
-
-                alert('Akses agen berhasil ditambahkan ke Google Sheets!');
-                document.getElementById('admin-nama-agen').value = '';
-                document.getElementById('admin-hp-agen').value = '';
-                renderDaftarAgen();
-            } catch (error) {
-                alert('Gagal menambahkan akses.');
-            }
-            showLoading(false);
+            postDataGoogle({ action: 'addUser', sheet: 'Users', hp: hp, nama: nama, role: 'agent' }, function(success) {
+                if(success) {
+                    alert('Akses agen berhasil ditambahkan ke Google Sheets!');
+                    document.getElementById('admin-nama-agen').value = '';
+                    document.getElementById('admin-hp-agen').value = '';
+                    renderDaftarAgen();
+                }
+            });
         }
 
-        async function renderDaftarAgen() {
+        function renderDaftarAgen() {
             let container = document.getElementById('list-agen-terdaftar');
             container.innerHTML = '<p class="text-slate-400 italic">Memuat...</p>';
 
-            try {
-                let response = await fetch(`${API_URL}&action=getUsers`);
-                let users = await response.json();
+            fetchJSONP('getUsers', {}, function(users) {
                 container.innerHTML = '';
-
                 let displayAgents = users.filter(a => String(a.hp).trim() !== '081232323145');
                 if(displayAgents.length === 0) {
                     container.innerHTML = '<p class="text-slate-400 italic">Belum ada agen terdaftar.</p>';
@@ -582,9 +552,7 @@
                     div.innerHTML = `<div><b>${agent.nama}</b><br>${agent.hp}</div><span class="text-[10px] bg-slate-200 px-2 py-1 rounded uppercase">${agent.role}</span>`;
                     container.appendChild(div);
                 });
-            } catch (error) {
-                container.innerHTML = '<p class="text-red-400 italic">Gagal memuat daftar agen.</p>';
-            }
+            });
         }
     </script>
 </body>
